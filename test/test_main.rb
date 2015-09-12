@@ -69,4 +69,33 @@ class ConditionVarTest < Minitest::Test
     main_method
     assert_equal(@arr_mutex, @expected_arr)
   end
+
+  def test_4
+    main_method
+    assert_equal(@arr_mutex, @expected_arr)
+  end
+  def test_5
+    main_method
+    assert_equal(@arr_mutex, @expected_arr)
+  end
+  def test_6
+    main_method
+    assert_equal(@arr_mutex, @expected_arr)
+  end
+  def test_7
+    main_method
+    assert_equal(@arr_mutex, @expected_arr)
+  end
+  def test_8
+    main_method
+    assert_equal(@arr_mutex, @expected_arr)
+  end
+  def test_9
+    main_method
+    assert_equal(@arr_mutex, @expected_arr)
+  end
+  def test_10
+    main_method
+    assert_equal(@arr_mutex, @expected_arr)
+  end
 end
