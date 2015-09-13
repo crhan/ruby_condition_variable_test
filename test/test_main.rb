@@ -5,41 +5,19 @@ class ConditionVarTest < Minitest::Test
 
   def main_method
 
-    @thread<< Thread.new do
-      @mutex.synchronize do
-        @arr.each { |a|
-          @value = a
-          @cv.broadcast
-          @cv.wait(@mutex)
-        }
+    3.times do |i|
+      @thread << Fiber.new do
+        while true
+          @arr_mutex << @value
+          Fiber.yield
+        end
       end
     end
 
-    @thread<< Thread.new do
-      @mutex.synchronize do
-        while @thread[0].alive?
-          @arr_mutex << @value if @value
-          @cv.signal if Thread.list.pop==Thread.current
-          @cv.wait(@mutex)
-        end
-      end
-    end
-    @thread<< Thread.new do
-      @mutex.synchronize do
-        while @thread[0].alive?
-          @arr_mutex << @value if @value
-          @cv.signal if Thread.list.pop==Thread.current
-          @cv.wait(@mutex)
-        end
-      end
-    end
-    @thread<< Thread.new do
-      @mutex.synchronize do
-        while @thread[0].alive?
-          @arr_mutex << @value if @value
-          @cv.signal if Thread.list.pop==Thread.current
-          @cv.wait(@mutex)
-        end
+    @arr.each do |a|
+      @value = a
+      @thread.each do |t|
+        t.resume
       end
     end
     sleep 0.5
