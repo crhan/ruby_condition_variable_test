@@ -9,6 +9,7 @@ class ConditionVarTest < Minitest::Test
       @mutex.synchronize do
         @arr.each { |a|
           @value = a
+          @runned = 0
           @cv.broadcast
           @cv.wait(@mutex)
         }
@@ -18,8 +19,24 @@ class ConditionVarTest < Minitest::Test
     @thread<< Thread.new do
       @mutex.synchronize do
         while @thread[0].alive?
-          @arr_mutex << @value if @value
-          @cv.signal if Thread.list.pop==Thread.current
+          if @value
+            @arr_mutex << @value
+            @runned += 1
+            @cv.signal if @runned == 3
+          end
+          @cv.wait(@mutex)
+        end
+      end
+    end
+
+    @thread<< Thread.new do
+      @mutex.synchronize do
+        while @thread[0].alive?
+          if @value
+            @arr_mutex << @value
+            @runned += 1
+            @cv.signal if @runned == 3
+          end
           @cv.wait(@mutex)
         end
       end
@@ -27,22 +44,17 @@ class ConditionVarTest < Minitest::Test
     @thread<< Thread.new do
       @mutex.synchronize do
         while @thread[0].alive?
-          @arr_mutex << @value if @value
-          @cv.signal if Thread.list.pop==Thread.current
-          @cv.wait(@mutex)
-        end
-      end
-    end
-    @thread<< Thread.new do
-      @mutex.synchronize do
-        while @thread[0].alive?
-          @arr_mutex << @value if @value
-          @cv.signal if Thread.list.pop==Thread.current
+          if @value
+            @arr_mutex << @value
+            @runned += 1
+            @cv.signal if @runned == 3
+          end
           @cv.wait(@mutex)
         end
       end
     end
     sleep 0.5
+
 
   end
 
